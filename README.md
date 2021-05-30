@@ -1,4 +1,4 @@
-# og-image generator
+# og-script: OpenGraph Image Generator
 
 Source: https://gersom.nl/post/og-images-on-netlify/
 
@@ -6,3 +6,8 @@ Source: https://gersom.nl/post/og-images-on-netlify/
 npm i chrome-aws-lambda puppeteer-core
 npm i -D puppeteer
 ```
+
+## Dependencies
+
+`chrome-aws-lambda`
+: for running headless chromium browser in serverless functions

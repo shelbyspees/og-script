@@ -1,4 +1,3 @@
-// for running headless chromium browser in serverless functions
 const chromium = require('chrome-aws-lambda');
 
 exports.handler = async (event, context, callback) => {
