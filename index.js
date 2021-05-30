@@ -1,4 +1,5 @@
 const chromium = require('chrome-aws-lambda');
+console.log("inside index.js!");
 
 exports.handler = async (event, context, callback) => {
   let result = null;
@@ -12,15 +13,16 @@ exports.handler = async (event, context, callback) => {
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
-
     let page = await browser.newPage();
-
     await page.goto(event.url || 'https://example.com');
-
     result = await page.title();
-  } catch (error) {
+    console.log(`the page title is ${result}`);
+  }
+  catch (error) {
+    console.log(error);
     return callback(error);
-  } finally {
+  }
+  finally {
     if (browser !== null) {
       await browser.close();
     }
