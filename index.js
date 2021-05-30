@@ -16,7 +16,6 @@ exports.handler = async (event, context, callback) => {
     let page = await browser.newPage();
     await page.goto(event.url || 'https://example.com');
     result = await page.title();
-    console.log(`the page title is ${result}`);
   }
   catch (error) {
     console.log(error);
@@ -28,5 +27,11 @@ exports.handler = async (event, context, callback) => {
     }
   }
 
+  function callback() {
+    console.log(`page title: ${result}`);
+  }
+
   return callback(null, result);
 };
+
+exports.handler({ url: "https://spees.dev" });
