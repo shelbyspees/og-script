@@ -9,5 +9,5 @@ npm i -D puppeteer
 
 ## Dependencies
 
-`chrome-aws-lambda`
+[`chrome-aws-lambda`](https://github.com/alixaxel/chrome-aws-lambda)
 : for running headless chromium browser in serverless functions
