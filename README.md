@@ -1,10 +1,12 @@
 # og-script: OpenGraph Image Generator
 
+Work in progress.
 Source: https://gersom.nl/post/og-images-on-netlify/
 
+## Run the code
+
 ```shell
-npm i chrome-aws-lambda puppeteer-core
-npm i -D puppeteer
+node index.js
 ```
 
 ## Dependencies
