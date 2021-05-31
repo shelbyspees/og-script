@@ -1,6 +1,6 @@
 {
   "name": "og-script",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Source: https://gersom.nl/post/og-images-on-netlify/",
   "main": "index.js",
   "scripts": {
