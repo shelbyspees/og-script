@@ -1,5 +1,8 @@
 const chromium = require('chrome-aws-lambda');
-console.log("inside index.js!");
+const fs = require('fs');
+const path = require('path');
+
+console.log('inside index.js!');
 
 exports.handler = async (event, context, callback) => {
   let result = null;
@@ -8,14 +11,33 @@ exports.handler = async (event, context, callback) => {
   try {
     browser = await chromium.puppeteer.launch({
       args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath,
       headless: chromium.headless,
-      ignoreHTTPSErrors: true,
     });
-    let page = await browser.newPage();
-    await page.goto(event.url || 'https://example.com');
-    result = await page.title();
+    const page = await browser.newPage();
+
+    // Load html from template
+    const html = fs
+      .readFileSync(path.resolve(__dirname, './template.html'))
+      .toString();
+
+    // Render html
+    await page.setContent(html, {
+      waitUntil: ['domcontentloaded'],
+    });
+
+    // Wait until the document is fully rendered
+    await page.evaluateHandle('document.fonts.ready');
+
+    // Set the viewport to your preferred og:image size
+    await page.setViewport({
+      width: 1200,
+      height: 632
+    });
+
+    // grab the page title to make sure it worked
+    // returns undefined right now
+    result = await page.$title;
   }
   catch (error) {
     console.log(error);
@@ -35,7 +57,7 @@ function printTitle(title) {
 }
 
 exports.handler(
-  { url: "https://spees.dev" },
-  "", // context doesn't get used
+  { url: 'https://spees.dev' },
+  '', // context doesn't get used
   printTitle // page title gets passed in by caller
 );
