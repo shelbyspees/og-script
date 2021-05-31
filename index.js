@@ -1,63 +1,60 @@
 const chromium = require('chrome-aws-lambda');
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 
 console.log('inside index.js!');
 
-exports.handler = async (event, context, callback) => {
-  let result = null;
-  let browser = null;
+module.exports = async posts => {
+  console.log('✨ Generating og:image for all posts ✨');
 
-  try {
-    browser = await chromium.puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath,
-      headless: chromium.headless,
+  const browser = await chromium.puppeteer.launch({
+    args: chromium.args,
+    executablePath: await chromium.executablePath,
+    headless: true, //chromium.headless,
+  });
+
+  const page = await browser.newPage();
+
+  let html = (
+    await fs.readFile(path.resolve(__dirname, './template.html'))
+  ).toString();
+
+  let avatar = await fs.readFile(path.resolve(__dirname, './avatar.jpeg'), {
+    encoding: 'base64',
+  });
+  html = html.replace(
+    './avatar.jpeg',
+    `data:image/jpeg;charset=utf-8;base64,${avatar}`
+  );
+
+  await page.setContent(html, {
+    waitUntil: ['domcontentloaded'],
+  });
+
+  await page.evaluateHandle('document.fonts.ready');
+
+  await page.setViewport({
+    width: 1200,
+    height: 632,
+  });
+
+  const baseDir = path.resolve('/Users/spees/projects/website/public/og-images/');
+  fs.ensureDir(path.resolve(baseDir));
+
+  for (const post of posts) {
+    await page.evaluate($post => {
+      let dom = document.querySelector('#title');
+      dom.innerHTML = $post.title;
+    }, post);
+    await page.screenshot({
+      path: `${baseDir}${post.slug.slice(0, -1)}.jpeg`,
+      type: 'jpeg',
+      quality: 100,
+      clip: { x: 0, y: 0, width: 1200, height: 632 },
     });
-    const page = await browser.newPage();
-
-    // Load html from template
-    const html = fs
-      .readFileSync(path.resolve(__dirname, './template.html'))
-      .toString();
-
-    // Render html
-    await page.setContent(html, {
-      waitUntil: ['domcontentloaded'],
-    });
-
-    // Wait until the document is fully rendered
-    await page.evaluateHandle('document.fonts.ready');
-
-    // Set the viewport to your preferred og:image size
-    await page.setViewport({
-      width: 1200,
-      height: 632
-    });
-
-    // grab the page title to make sure it worked
-    // returns undefined right now
-    result = await page.$title;
-  }
-  catch (error) {
-    console.log(error);
-    return callback(error);
-  }
-  finally {
-    if (browser !== null) {
-      await browser.close();
-    }
   }
 
-  return callback(result);
+  await browser.close();
 };
 
-function printTitle(title) {
-  console.log(`page title: ${title}`);
-}
-
-exports.handler(
-  { url: 'https://spees.dev' },
-  '', // context doesn't get used
-  printTitle // page title gets passed in by caller
-);
+module.exports("");
