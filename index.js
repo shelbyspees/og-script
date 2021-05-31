@@ -34,4 +34,8 @@ function printTitle(title) {
   console.log(`page title: ${title}`);
 }
 
-exports.handler({ url: "https://spees.dev" });
+exports.handler(
+  { url: "https://spees.dev" },
+  "", // context doesn't get used
+  printTitle // page title gets passed in by caller
+);
