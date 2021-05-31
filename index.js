@@ -27,11 +27,11 @@ exports.handler = async (event, context, callback) => {
     }
   }
 
-  function callback() {
-    console.log(`page title: ${result}`);
-  }
-
-  return callback(null, result);
+  return callback(result);
 };
+
+function printTitle(title) {
+  console.log(`page title: ${title}`);
+}
 
 exports.handler({ url: "https://spees.dev" });
