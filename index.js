@@ -39,7 +39,7 @@ module.exports = async posts => {
   });
 
   const baseDir = path.resolve('/Users/spees/projects/website/public/og-images/');
-  fs.ensureDir(path.resolve(baseDir));
+  fs.ensureDir(path.resolve(baseDir)); // this works
 
   for (const post of posts) {
     await page.evaluate($post => {
@@ -56,5 +56,3 @@ module.exports = async posts => {
 
   await browser.close();
 };
-
-module.exports("");
